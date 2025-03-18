@@ -1,26 +1,62 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port           string
-	OpenRouterKey  string
-	MaxConcurrent  int
-	RequestTimeout time.Duration
-	ChunkSize      int
+	Port            string
+	OpenRouterKey   string
+	MaxConcurrent   int
+	RequestTimeout  time.Duration
+	ChunkSize       int
+	TargetWordCount int
 }
 
 func Load() *Config {
+	log.Println("Loading configuration from environment")
+
+	// Load .env file if it exists
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Warning: .env file not found or couldn't be loaded: %v", err)
+	} else {
+		log.Println("Successfully loaded .env file")
+	}
+
+	port := getEnv("PORT", "8080")
+	log.Printf("PORT: %s", port)
+
+	apiKey := getEnv("OPENROUTER_API_KEY", "")
+	if apiKey == "" {
+		log.Printf("WARNING: OPENROUTER_API_KEY not set")
+	} else {
+		log.Printf("OPENROUTER_API_KEY: [REDACTED]")
+	}
+
+	maxConcurrent := getEnvAsInt("MAX_CONCURRENT", 10)
+	log.Printf("MAX_CONCURRENT: %d", maxConcurrent)
+
+	requestTimeout := getEnvAsDuration("REQUEST_TIMEOUT", 30*time.Second)
+	log.Printf("REQUEST_TIMEOUT: %v", requestTimeout)
+
+	chunkSize := getEnvAsInt("CHUNK_SIZE", 900)
+	log.Printf("CHUNK_SIZE: %d", chunkSize)
+
+	targetWordCount := getEnvAsInt("TARGET_WORD_COUNT", 400)
+	log.Printf("TARGET_WORD_COUNT: %d", targetWordCount)
+
 	return &Config{
-		Port:           getEnv("PORT", "8080"),
-		OpenRouterKey:  getEnv("OPENROUTER_API_KEY", ""),
-		MaxConcurrent:  getEnvAsInt("MAX_CONCURRENT", 10),
-		RequestTimeout: getEnvAsDuration("REQUEST_TIMEOUT", 30*time.Second),
-		ChunkSize:      getEnvAsInt("CHUNK_SIZE", 900),
+		Port:            port,
+		OpenRouterKey:   apiKey,
+		MaxConcurrent:   maxConcurrent,
+		RequestTimeout:  requestTimeout,
+		ChunkSize:       chunkSize,
+		TargetWordCount: targetWordCount,
 	}
 }
 
@@ -28,6 +64,7 @@ func Load() *Config {
 func getEnv(key, defaultValue string) string {
 	value := os.Getenv(key)
 	if value == "" {
+		log.Printf("Environment variable %s not set, using default: %s", key, defaultValue)
 		return defaultValue
 	}
 	return value
@@ -42,6 +79,7 @@ func getEnvAsInt(key string, defaultValue int) int {
 
 	value, err := strconv.Atoi(valueStr)
 	if err != nil {
+		log.Printf("Failed to parse %s as integer: %v, using default: %d", key, err, defaultValue)
 		return defaultValue
 	}
 	return value
@@ -56,6 +94,7 @@ func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
 
 	value, err := time.ParseDuration(valueStr)
 	if err != nil {
+		log.Printf("Failed to parse %s as duration: %v, using default: %v", key, err, defaultValue)
 		return defaultValue
 	}
 	return value
