@@ -1,3 +1,4 @@
+// config.go
 package config
 
 import (
@@ -10,12 +11,11 @@ import (
 )
 
 type Config struct {
-	Port            string
-	OpenRouterKey   string
-	MaxConcurrent   int
-	RequestTimeout  time.Duration
-	ChunkSize       int
-	TargetWordCount int
+	Port           string
+	OpenRouterKey  string
+	MaxConcurrent  int
+	RequestTimeout time.Duration
+	ChunkSize      int
 }
 
 func Load() *Config {
@@ -47,16 +47,12 @@ func Load() *Config {
 	chunkSize := getEnvAsInt("CHUNK_SIZE", 900)
 	log.Printf("CHUNK_SIZE: %d", chunkSize)
 
-	targetWordCount := getEnvAsInt("TARGET_WORD_COUNT", 400)
-	log.Printf("TARGET_WORD_COUNT: %d", targetWordCount)
-
 	return &Config{
-		Port:            port,
-		OpenRouterKey:   apiKey,
-		MaxConcurrent:   maxConcurrent,
-		RequestTimeout:  requestTimeout,
-		ChunkSize:       chunkSize,
-		TargetWordCount: targetWordCount,
+		Port:           port,
+		OpenRouterKey:  apiKey,
+		MaxConcurrent:  maxConcurrent,
+		RequestTimeout: requestTimeout,
+		ChunkSize:      chunkSize,
 	}
 }
 

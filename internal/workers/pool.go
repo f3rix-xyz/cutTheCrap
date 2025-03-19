@@ -1,3 +1,4 @@
+// pool.go
 package workers
 
 import (
@@ -10,7 +11,7 @@ import (
 	"time"
 )
 
-func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config) []string {
+func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config, ratio float64) []string {
 	startTime := time.Now()
 
 	// Calculate total input words
@@ -50,7 +51,13 @@ func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config) []s
 
 				inputWords := len(strings.Fields(text))
 				log.Printf("Processing chunk %d (%d words)", index, inputWords)
-				content, err := api.ProcessText(ctx, text, cfg.OpenRouterKey, cfg.TargetWordCount)
+
+				targetWordCount := int(float64(cfg.ChunkSize) * ratio)
+				if targetWordCount <= 0 {
+					targetWordCount = 1 // Ensure at least 1 word target.
+				}
+
+				content, err := api.ProcessText(ctx, text, cfg.OpenRouterKey, targetWordCount)
 				if err != nil {
 					log.Printf("Error processing chunk %d: %v", index, err)
 				} else {
@@ -90,7 +97,7 @@ func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config) []s
 
 	reductionPercent := 100.0
 	if totalInputWords > 0 {
-		reductionPercent = 100.0 - (float64(totalOutputWords) / float64(totalInputWords) * 100.0)
+		reductionPercent = 100.0 - (float64(totalOutputWords)/float64(totalInputWords))*100.0
 	}
 
 	log.Printf("Processing completed in %v, received %d valid results out of %d chunks",

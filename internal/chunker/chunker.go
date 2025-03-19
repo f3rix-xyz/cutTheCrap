@@ -1,3 +1,4 @@
+// chunker.go
 package chunker
 
 import (
