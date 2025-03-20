@@ -12,7 +12,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-file-alt"></i> Text Processor</h1>
-            <p class="subtitle">Compress and process your text efficiently</p>
+            <p class="subtitle">Transform and compress your text with elegance</p>
         </header>
         
         <div class="card">
@@ -20,18 +20,18 @@
                 <h2>Input</h2>
             </div>
             <div class="card-body">
-                <textarea id="text-input" placeholder="Enter text here or upload a file..." rows="10"></textarea>
+                <textarea id="text-input" placeholder="Enter your text here or upload a file to begin processing..." rows="10"></textarea>
                 
-                <div class="file-upload">
+                <div class="button-group">
                     <label for="file-input" class="file-label">
                         <i class="fas fa-upload"></i> Upload File
                     </label>
-                    <input type="file" id="file-input" accept=".txt, .pdf">
-                    <span id="file-name">No file selected</span>
                 </div>
+                <input type="file" id="file-input" accept=".txt, .pdf">
+                <span id="file-name">No file selected</span>
                 
                 <div class="ratio-container">
-                    <label for="ratio-input">Compression Ratio:</label>
+                    <label for="ratio-input">Compression Ratio</label>
                     <div class="slider-container">
                         <input type="range" id="ratio-input" min="0.1" max="1.0" step="0.1" value="0.4">
                         <span id="ratio-value">0.4</span>
@@ -56,15 +56,15 @@
             <div class="card-body">
                 <div id="result-stats">
                     <div class="stat">
-                        <span class="stat-label">Original Size:</span>
+                        <span class="stat-label">Original Size</span>
                         <span id="original-size" class="stat-value">-</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Processed Size:</span>
+                        <span class="stat-label">Processed Size</span>
                         <span id="processed-size" class="stat-value">-</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Reduction:</span>
+                        <span class="stat-label">Reduction</span>
                         <span id="reduction-percent" class="stat-value">-</span>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
         </div>
         
         <footer>
-            <p>&copy; 2023 Text Processor. All rights reserved.</p>
+            <p>&copy; 2025 Text Processor. All rights reserved.</p>
         </footer>
     </div>
 
