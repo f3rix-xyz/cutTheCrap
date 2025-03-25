@@ -15,7 +15,6 @@ func ExtractContent(r io.ReaderAt) (string, error) {
 	startTime := time.Now()
 	log.Println("Starting PDF content extraction")
 
-	// Create a temporary file to handle the ReaderAt interface
 	tmpFile, err := os.CreateTemp("", "pdf-extract-*.pdf")
 	if err != nil {
 		log.Printf("Failed to create temporary file: %v", err)
@@ -25,9 +24,7 @@ func ExtractContent(r io.ReaderAt) (string, error) {
 	defer tmpFile.Close()
 	log.Printf("Created temporary file: %s", tmpFile.Name())
 
-	// Copy content from ReaderAt to the temp file
 	if readSeeker, ok := r.(io.ReadSeeker); ok {
-		// If it's also a ReadSeeker, use that for efficiency
 		log.Println("Using ReadSeeker interface for efficient copying")
 		bytesWritten, err := io.Copy(tmpFile, readSeeker)
 		if err != nil {
@@ -36,7 +33,6 @@ func ExtractContent(r io.ReaderAt) (string, error) {
 		}
 		log.Printf("Copied %d bytes to temporary file", bytesWritten)
 	} else {
-		// Otherwise read from the ReaderAt
 		log.Println("Using ReadAt interface for copying")
 		data := make([]byte, 1024)
 		var offset int64
@@ -62,14 +58,12 @@ func ExtractContent(r io.ReaderAt) (string, error) {
 		log.Printf("Copied %d bytes to temporary file", totalBytes)
 	}
 
-	// Rewind the file
 	if _, err := tmpFile.Seek(0, 0); err != nil {
 		log.Printf("Failed to rewind temporary file: %v", err)
 		return "", err
 	}
 	log.Println("Rewound temporary file to beginning")
 
-	// Open the PDF file
 	log.Println("Opening PDF file with ledongthuc/pdf library")
 	f, reader, err := pdf.Open(tmpFile.Name())
 	if err != nil {
@@ -79,7 +73,6 @@ func ExtractContent(r io.ReaderAt) (string, error) {
 	defer f.Close()
 	log.Printf("PDF opened successfully, pages: %d", reader.NumPage())
 
-	// Extract text
 	log.Println("Extracting plain text from PDF")
 	var buf bytes.Buffer
 	b, err := reader.GetPlainText()

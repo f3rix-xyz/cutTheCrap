@@ -1,4 +1,3 @@
-// openrouter.go
 package api
 
 import (
@@ -55,8 +54,8 @@ func ProcessText(ctx context.Context, text, apiKey string, targetWordCount int) 
 
 Important: Return ONLY the condensed text without any introductions, explanations, or summaries. Do not include phrases like "Here's the condensed version" or "In summary". Just provide the rewritten text directly.`, targetWordCount)
 
-	payload := map[string]interface{}{
-		"contents": []map[string]interface{}{
+	payload := map[string]any{
+		"contents": []map[string]any{
 			{
 				"parts": []map[string]string{
 					{

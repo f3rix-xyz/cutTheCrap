@@ -1,4 +1,3 @@
-// config.go
 package config
 
 import (
@@ -21,7 +20,6 @@ type Config struct {
 func Load() *Config {
 	log.Println("Loading configuration from environment")
 
-	// Load .env file if it exists
 	if err := godotenv.Load(); err != nil {
 		log.Printf("Warning: .env file not found or couldn't be loaded: %v", err)
 	} else {
@@ -56,7 +54,6 @@ func Load() *Config {
 	}
 }
 
-// getEnv retrieves environment variable or returns default value if not set
 func getEnv(key, defaultValue string) string {
 	value := os.Getenv(key)
 	if value == "" {
@@ -66,7 +63,6 @@ func getEnv(key, defaultValue string) string {
 	return value
 }
 
-// getEnvAsInt retrieves environment variable as integer or returns default value
 func getEnvAsInt(key string, defaultValue int) int {
 	valueStr := getEnv(key, "")
 	if valueStr == "" {
@@ -81,7 +77,6 @@ func getEnvAsInt(key string, defaultValue int) int {
 	return value
 }
 
-// getEnvAsDuration retrieves environment variable as duration or returns default value
 func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
 	valueStr := getEnv(key, "")
 	if valueStr == "" {

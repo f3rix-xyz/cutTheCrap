@@ -1,4 +1,3 @@
-// pool.go
 package workers
 
 import (
@@ -14,7 +13,6 @@ import (
 func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config, ratio float64) []string {
 	startTime := time.Now()
 
-	// Calculate total input words
 	totalInputWords := 0
 	for _, chunk := range chunks {
 		totalInputWords += len(strings.Fields(chunk))
@@ -54,7 +52,7 @@ func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config, rat
 
 				targetWordCount := int(float64(cfg.ChunkSize) * ratio)
 				if targetWordCount <= 0 {
-					targetWordCount = 1 // Ensure at least 1 word target.
+					targetWordCount = 1
 				}
 
 				content, err := api.ProcessText(ctx, text, cfg.OpenRouterKey, targetWordCount)
@@ -85,7 +83,6 @@ func ProcessChunks(ctx context.Context, chunks []string, cfg *config.Config, rat
 		results[res.index] = res.content
 	}
 
-	// Count non-empty results and total output words
 	validResults := 0
 	totalOutputWords := 0
 	for _, r := range results {
