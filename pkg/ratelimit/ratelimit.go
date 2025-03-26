@@ -1,6 +1,8 @@
-package bucket
+package ratelimit
 
 import (
+	"net/http"
+	"sync"
 	"time"
 )
 
@@ -8,6 +10,7 @@ type TokenBucket[K comparable] struct {
 	max                   int
 	refillIntervalSeconds int
 	storage               map[K]*Bucket
+	mu                    sync.Mutex
 }
 
 type Bucket struct {
@@ -24,6 +27,9 @@ func NewTokenBucket[K comparable](max int, refillIntervalSeconds int) *TokenBuck
 }
 
 func (tb *TokenBucket[K]) Check(key K, cost int) bool {
+	tb.mu.Lock()
+	defer tb.mu.Unlock()
+
 	bucket, exists := tb.storage[key]
 	if !exists {
 		return true
@@ -41,6 +47,9 @@ func (tb *TokenBucket[K]) Check(key K, cost int) bool {
 }
 
 func (tb *TokenBucket[K]) Consume(key K, cost int) bool {
+	tb.mu.Lock()
+	defer tb.mu.Unlock()
+
 	now := time.Now().UnixMilli()
 	bucket, exists := tb.storage[key]
 
@@ -68,4 +77,22 @@ func (tb *TokenBucket[K]) Consume(key K, cost int) bool {
 
 	bucket.Count -= cost
 	return true
+}
+
+var globalBucket = NewTokenBucket[string](100, 1)
+
+func GlobalGETRateLimit(r *http.Request) bool {
+	clientIP := r.Header.Get("X-Forwarded-For")
+	if clientIP == "" {
+		return true
+	}
+	return globalBucket.Consume(clientIP, 1)
+}
+
+func GlobalPOSTRateLimit(r *http.Request) bool {
+	clientIP := r.Header.Get("X-Forwarded-For")
+	if clientIP == "" {
+		return true
+	}
+	return globalBucket.Consume(clientIP, 3)
 }
